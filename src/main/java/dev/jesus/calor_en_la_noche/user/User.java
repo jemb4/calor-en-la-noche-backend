@@ -1,7 +1,6 @@
-package dev.jesus.calor_en_la_noche.pdf;
+package dev.jesus.calor_en_la_noche.user;
 
-import java.time.LocalDate;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,21 +13,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "pdfs")
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-public class Pdf {
+public class User {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer pdfId;
+  @Column(name = "id_user")
+  private Long id;
 
-  private String name;
-  private int age;
-  private LocalDate uploadDay;
+  private String email;
+  private String password;
 
-  // private User user;
+  // TODO: relationship with roles or/and profile
 
 }
