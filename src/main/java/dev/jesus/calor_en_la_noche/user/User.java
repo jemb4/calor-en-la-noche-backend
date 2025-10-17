@@ -27,7 +27,7 @@ public class User {
   private Long id;
 
   private String email;
-  private String password;
+  private String passwordHash;
 
   // TODO: relationship with roles or/and profile
 
