@@ -1,7 +1,20 @@
-CREATE TABLE usuarios (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    nombre VARCHAR(100),
-    email VARCHAR(100)
-);
+-- =======================
+-- Roles
+-- =======================
+INSERT IGNORE INTO roles (name) VALUES ('ADMIN'), ('USER');
 
-INSERT INTO usuarios(nombre, email) VALUES ('Juan', 'juan@mail.com');
+-- =======================
+-- Users
+-- =======================
+INSERT INTO users (email, password_hash)
+VALUES 
+('admin1@calor.com', 'MTIzNDU2'),
+('admin2@calor.com', 'MTIzNDU2');
+
+-- =======================
+-- Asign rols
+-- =======================
+INSERT INTO roles_users (user_id, role_id)
+VALUES 
+(1, 1),
+(2, 1);

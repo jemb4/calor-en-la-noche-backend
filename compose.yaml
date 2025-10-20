@@ -4,7 +4,6 @@ services:
     environment:
       - 'MYSQL_DATABASE=calor-en-la-noche'
       - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
       - 'MYSQL_USER=myuser'
     ports:
       - '3306:3306'

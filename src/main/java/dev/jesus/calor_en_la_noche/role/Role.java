@@ -2,8 +2,6 @@ package dev.jesus.calor_en_la_noche.role;
 
 import java.util.Set;
 
-import org.hibernate.annotations.Collate;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import dev.jesus.calor_en_la_noche.user.User;
