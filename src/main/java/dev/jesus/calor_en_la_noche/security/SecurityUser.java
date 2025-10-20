@@ -34,7 +34,7 @@ public class SecurityUser implements UserDetails {
 
     for (Role role : user.getRoles()) {
       System.out.println("User role : " + role.getName());
-      SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
+      SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.getName());
       authorities.add(authority);
     }
 

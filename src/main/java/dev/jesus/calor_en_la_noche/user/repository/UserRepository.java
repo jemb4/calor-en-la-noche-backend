@@ -8,5 +8,5 @@ import dev.jesus.calor_en_la_noche.user.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-  Optional<User> findByEmail(String email);
+  public Optional<User> findByEmail(String email);
 }
