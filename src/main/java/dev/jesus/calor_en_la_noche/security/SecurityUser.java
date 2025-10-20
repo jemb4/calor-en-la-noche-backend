@@ -1,10 +1,13 @@
 package dev.jesus.calor_en_la_noche.security;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import dev.jesus.calor_en_la_noche.role.Role;
 import dev.jesus.calor_en_la_noche.user.User;
 
 public class SecurityUser implements UserDetails {
@@ -16,21 +19,46 @@ public class SecurityUser implements UserDetails {
   }
 
   @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
-  }
-
-  @Override
   public String getPassword() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getPassword'");
+    return user.getPasswordHash();
   }
 
   @Override
   public String getUsername() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
+    return user.getEmail();
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+
+    for (Role role : user.getRoles()) {
+      System.out.println("User role : " + role.getName());
+      SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
+      authorities.add(authority);
+    }
+
+    return authorities;
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return true;
   }
 
 }

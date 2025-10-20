@@ -19,9 +19,9 @@ public class JpaUserDetailService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    // User user = userRepository.findByEmail(email)
-    // .map(TODO)
-    throw new UnsupportedOperationException("Unimplemented method 'getPassword'");
+    return userRepository.findByEmail(email)
+        .map(SecurityUser::new)
+        .orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " not found"));
   }
 
 }
