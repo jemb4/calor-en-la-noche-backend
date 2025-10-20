@@ -8,7 +8,7 @@ INSERT IGNORE INTO roles (name) VALUES ('ADMIN'), ('USER');
 -- =======================
 INSERT INTO users (email, password_hash)
 VALUES 
-('admin1@calor.com', 'MTIzNDU2'),
+('admin1@calor.com', '123456'),
 ('admin2@calor.com', 'MTIzNDU2');
 
 -- =======================

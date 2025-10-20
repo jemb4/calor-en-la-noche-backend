@@ -1,9 +1,10 @@
 services:
   mysql:
-    image: 'mysql:latest'
+    image: 'mysql:8.0'   # más estable que latest
     environment:
-      - 'MYSQL_DATABASE=calor-en-la-noche'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_USER=myuser'
+      MYSQL_DATABASE: calor-noche
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: verysecret
     ports:
       - '3306:3306'
