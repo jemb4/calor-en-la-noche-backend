@@ -29,6 +29,7 @@ public class Pdf {
   private Integer pdfId;
 
   private String name;
+  private String urlPdf;
   private int age;
   private LocalDate uploadDay;
 
