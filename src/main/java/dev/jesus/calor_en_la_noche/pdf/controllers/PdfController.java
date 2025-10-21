@@ -29,7 +29,7 @@ public class PdfController {
   ) {
     // Aquí debes recuperar el User de tu repositorio
     User manager = new User(); // reemplaza con la lógica real para obtener al usuario
-    manager.setId(userId);
+    // manager.setId(userId);
 
     try {
       Pdf pdf = pdfService.uploadPdf(file, name, age, manager);
