@@ -53,6 +53,8 @@ public class SecurityConfiguration {
             .requestMatchers(HttpMethod.POST, endpoint + "/register").permitAll()
             .requestMatchers(endpoint + "/login").hasAnyRole("USER", "ADMIN")
             .requestMatchers(HttpMethod.GET, endpoint + "/private").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.GET, endpoint + "/pdf/all").permitAll()
+            .requestMatchers("/api/v1/pdf/**").authenticated()
             .requestMatchers(
                 "/swagger-ui.html",
                 "/swagger-ui/**",

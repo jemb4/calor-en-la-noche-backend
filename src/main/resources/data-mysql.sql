@@ -18,3 +18,15 @@ INSERT INTO roles_users (user_id, role_id)
 VALUES 
 (1, 1),
 (2, 1);
+
+-- =======================
+-- Pdfs
+-- =======================
+INSERT INTO pdfs (name, url_pdf, age, upload_day, user_id)
+VALUES (
+    'test',
+    'https://res.cloudinary.com/djhgovlrz/image/upload/v1761131438/rgaxwr92iwq62wsmg3sg.pdf',
+    2022,
+    '2025-10-22',
+    1
+);
