@@ -11,7 +11,6 @@ public class CloudinaryProperties {
   private String apiKey;
   private String apiSecret;
 
-  // Getters y Setters
   public String getCloudName() {
     return cloudName;
   }

@@ -1,43 +1,80 @@
 package dev.jesus.calor_en_la_noche.pdf.services;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-
 import dev.jesus.calor_en_la_noche.pdf.Pdf;
+import dev.jesus.calor_en_la_noche.pdf.dtos.PdfRequest;
+import dev.jesus.calor_en_la_noche.pdf.dtos.PdfResponse;
+import dev.jesus.calor_en_la_noche.pdf.mappers.PdfMapper;
 import dev.jesus.calor_en_la_noche.pdf.repository.PdfRepository;
 import dev.jesus.calor_en_la_noche.user.User;
+import dev.jesus.calor_en_la_noche.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class PdfService {
 
-  private final Cloudinary cloudinary;
   private final PdfRepository pdfRepository;
+  private final CloudinaryService cloudinaryService;
+  private final UserRepository userRepository;
+  private final PdfMapper pdfMapper;
 
-  public PdfService(Cloudinary cloudinary, PdfRepository pdfRepository) {
-    this.cloudinary = cloudinary;
-    this.pdfRepository = pdfRepository;
+  public PdfResponse uploadPdf(MultipartFile file, PdfRequest dto) throws IOException {
+    if (!file.getContentType().equals("application/pdf")) {
+      throw new IllegalArgumentException("Only valids PDF files.");
+    }
+
+    String url = cloudinaryService.uploadFile(file);
+
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String email = auth.getName();
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("User with email: " + email + " not founded."));
+
+    Pdf pdf = pdfMapper.toEntity(dto, url, user);
+    Pdf saved = pdfRepository.save(pdf);
+
+    return pdfMapper.toResponse(saved);
   }
 
-  public Pdf uploadPdf(MultipartFile file, String name, int age, User manager) throws IOException {
-    Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-        ObjectUtils.asMap("resource_type", "auto")); // "auto" detecta PDFs automáticamente
+  public List<PdfResponse> getMyPdfs() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String email = auth.getName();
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("User with email: " + email + " not founded."));
 
-    String urlPdf = (String) uploadResult.get("secure_url");
+    return pdfRepository.findByManager(user).stream()
+        .map(pdfMapper::toResponse)
+        .collect(Collectors.toList());
+  }
 
-    Pdf pdf = Pdf.builder()
-        .name(name)
-        .age(age)
-        .uploadDay(java.time.LocalDate.now())
-        .manager(manager)
-        .urlPdf(urlPdf)
-        .build();
+  public List<PdfResponse> getAllPdfs() {
+    return pdfRepository.findAll().stream()
+        .map(pdfMapper::toResponse)
+        .collect(Collectors.toList());
+  }
 
-    return pdfRepository.save(pdf);
+  public void deletePdf(Integer pdfId) {
+    Pdf pdf = pdfRepository.findById(pdfId)
+        .orElseThrow(() -> new RuntimeException("PDF no encontrado."));
+
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String email = auth.getName();
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + email));
+
+    if (!pdf.getManager().getEmail().equals(user.getEmail())) {
+      throw new RuntimeException("No tienes permiso para eliminar este PDF.");
+    }
+
+    pdfRepository.delete(pdf);
   }
 }
