@@ -28,8 +28,13 @@ public class PdfService {
   private final PdfMapper pdfMapper;
 
   public PdfResponse uploadPdf(MultipartFile file, PdfRequest dto) throws IOException {
-    if (!file.getContentType().equals("application/pdf")) {
-      throw new IllegalArgumentException("Only valids PDF files.");
+    String contentType = file.getContentType();
+    String filename = file.getOriginalFilename();
+
+    if (contentType == null ||
+        !contentType.equalsIgnoreCase("application/pdf") ||
+        (filename != null && !filename.toLowerCase().endsWith(".pdf"))) {
+      throw new IllegalArgumentException("Only valid PDF files are allowed.");
     }
 
     String url = cloudinaryService.uploadFile(file);
