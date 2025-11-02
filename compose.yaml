@@ -1,10 +1,47 @@
+# services:
+#   mysql:
+#     image: 'mysql:8.0'   
+#     environment:
+#       MYSQL_DATABASE: calor-noche
+#       MYSQL_USER: myuser
+#       MYSQL_PASSWORD: secret
+#       MYSQL_ROOT_PASSWORD: verysecret
+#     ports:
+#       - '3306:3306'
+
 services:
   mysql:
-    image: 'mysql:8.0'   
-    environment:
-      MYSQL_DATABASE: calor-noche
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: secret
-      MYSQL_ROOT_PASSWORD: verysecret
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    env_file:
+      - .env
     ports:
-      - '3306:3306'
+      - "3306:3306"
+    volumes:    
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u${MYSQL_USER} -p${MYSQL_PASSWORD} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 25s   # importante para primer init
+
+  backend:
+    build: .
+    container_name: springboot-container
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+
+volumes:
+  mysql_data:
