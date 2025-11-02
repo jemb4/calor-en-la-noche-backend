@@ -105,31 +105,39 @@ La aplicación está configurada para:
 
 - Docker
 - Docker Compose
-- Java 21
-- Maven
 
-### Pasos
+### Opción 1: Docker (recomendada)
 
 1. Clona el repositorio:
-   ```bash
-   git clone <https://github.com/jemb4/calor-en-la-noche-backend/tree/dev>
-   ```
-2. Accede al directorio del proyecto:
 
-```
-cd veterinary-clinic-backend
+```bash
+git clone https://github.com/jemb4/calor-en-la-noche-backend
 ```
 
-3. Levanta la aplicación con Docker Compose:
+2. Accede al directorio:
 
+```bash
+cd calor-en-la-noche-backend
 ```
+
+3. Inicia la aplicación:
+
+```bash
 docker compose up -d
 ```
 
-4. Ejecuta la aplicación:
+### Opción 2: Ejecución local
 
-```
-mvnw spring-boot:run
+Requisitos adicionales:
+
+- Java 21
+- Maven
+
+1. Configura las variables de entorno
+2. Ejecuta:
+
+```bash
+./mvnw spring-boot:run
 ```
 
 La aplicación estará disponible en `http://localhost:8080`
@@ -168,10 +176,154 @@ El proyecto incluye:
 - Build con Maven
 - Contenedorización con Docker
 
+## 🐳 Dockerización
+
+### Contenedores
+
+La aplicación está completamente dockerizada y usa los siguientes servicios:
+
+- **app**: Aplicación Spring Boot
+- **mysql**: Base de datos MySQL
+- **phpmyadmin**: Interfaz web para MySQL (opcional)
+
+### Comandos Docker
+
+1. **Iniciar todos los servicios**:
+
+```bash
+docker compose up
+```
+
+2. **Iniciar en modo detached**:
+
+```bash
+docker compose up -d
+```
+
+3. **Detener y eliminar contenedores**:
+
+```bash
+docker compose down
+```
+
+4. **Detener, eliminar contenedores y volúmenes**:
+
+```bash
+docker compose down -v
+```
+
+5. **Ver logs de la aplicación**:
+
+```bash
+docker compose logs -f app
+```
+
+### Puertos expuestos
+
+- **8080**: API Spring Boot
+- **3306**: MySQL
+
+### Volúmenes persistentes
+
+- `mysql_data`: Datos de MySQL
+- `uploads`: Archivos PDF temporales
+
+Para reconstruir las imágenes después de cambios:
+
+```bash
+docker compose build --no-cache
+```
+
+La aplicación estará disponible en `http://localhost:8080`
+
 ## 📊 Diagramas
 
-![Diagrama de Clases](docs/diagrama-clases.png)
-![Diagrama de Flujo](docs/diagrama-flujo.png)
+![Diagrama de Flujo admin](docs/D-F-admin.png)
+![Diagrama de Flujo invitado](docs/D-F-Guess.png)
+![Diagrama de casos de uso](docs/Diagrama-casos-uso.png)
 ![Diagrama  ER](docs/diagrama-er.png)
 
-**Desarrollado con ❤️ y Spring Boot**
+```mermaid
+classDiagram
+    class User {
+        -Long id
+        -String email
+        -String passwordHash
+        -Set<Role> roles
+        +equals(Object o)
+        +hashCode()
+    }
+
+    class Role {
+        -Long id
+        -String name
+        -Set<User> users
+    }
+
+    class Pdf {
+        -Integer pdfId
+        -String name
+        -String urlPdf
+        -int age
+        -LocalDate uploadDay
+        -User manager
+    }
+
+    class PdfService {
+        -PdfRepository pdfRepository
+        -CloudinaryService cloudinaryService
+        -UserRepository userRepository
+        -PdfMapper pdfMapper
+        +uploadPdf(MultipartFile, PdfRequest)
+        +getMyPdfs()
+        +getAllPdfs()
+        +deletePdf(Integer)
+    }
+
+    class CloudinaryService {
+        -Cloudinary cloudinary
+        +uploadFile(MultipartFile)
+    }
+
+    class SecurityUser {
+        -User user
+        +getPassword()
+        +getUsername()
+        +getAuthorities()
+    }
+
+    class JpaUserDetailService {
+        -UserRepository userRepository
+        +loadUserByUsername(String)
+    }
+
+    class PdfController {
+        -PdfService pdfService
+        +uploadPdf(MultipartFile, String)
+        +getMyPdfs()
+        +getAllPdfs()
+        +deletePdf(Integer)
+    }
+
+    class AuthController {
+        +login()
+    }
+
+    class HomeController {
+        +index()
+        +publicPath()
+        +privatePath()
+    }
+
+    User "1" *-- "many" Role : has
+    User "1" --* "many" Pdf : manages
+    PdfController --> PdfService : uses
+    PdfService --> CloudinaryService : uses
+    PdfService --> UserRepository : uses
+    PdfService --> PdfRepository : uses
+    SecurityUser --> User : wraps
+    JpaUserDetailService --> UserRepository : uses
+
+```
+
+**Desarrollado con ❤️ y Spring Boot**.
