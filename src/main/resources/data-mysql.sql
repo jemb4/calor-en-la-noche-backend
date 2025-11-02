@@ -25,7 +25,7 @@ VALUES
 INSERT INTO pdfs (name, url_pdf, age, upload_day, user_id)
 VALUES (
     'test',
-    'https://res.cloudinary.com/djhgovlrz/image/upload/v1761206284/s7rklr3rslf9lmvuvkvf.pdf',
+    'https://res.cloudinary.com/djhgovlrz/image/upload/v1761916360/dnp0mo9zgjyf0khcwn5w.pdf',
     2022,
     '2025-10-22',
     1
