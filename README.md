@@ -326,4 +326,8 @@ classDiagram
 
 ```
 
+## ✅ Coverage
+
+![Coverage](docs/coverage.png)
+
 **Desarrollado con ❤️ y Spring Boot**.
